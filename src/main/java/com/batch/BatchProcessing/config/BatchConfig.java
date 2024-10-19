@@ -8,6 +8,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
@@ -27,6 +28,7 @@ public class BatchConfig {
     private final StudentRepository studentRepository;
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
+    private final ItemProcessor studentProcessor;
 
     @Bean
     public FlatFileItemReader<Student> itemReader(){
@@ -53,10 +55,8 @@ public class BatchConfig {
         return lineMapper;
     }
 
-    @Bean
-    public StudentProcessor processor(){
-        return new StudentProcessor();
-    }
+
+
 
     @Bean
     public RepositoryItemWriter<Student> writer(){
@@ -71,7 +71,7 @@ public class BatchConfig {
         return new StepBuilder("csvImport",jobRepository)
                 .<Student,Student>chunk(100,platformTransactionManager)
                 .reader(itemReader())
-                .processor(processor())
+                .processor(studentProcessor)
                 .writer(writer())
                 .taskExecutor(taskExecutor())
                 .build();
@@ -92,6 +92,7 @@ public class BatchConfig {
         * */
         return new JobBuilder("importStudents", jobRepository)
                 .start(importStep())
+
                 .build();
 
     }

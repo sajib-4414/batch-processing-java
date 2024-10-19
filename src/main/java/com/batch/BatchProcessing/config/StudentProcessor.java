@@ -2,7 +2,9 @@ package com.batch.BatchProcessing.config;
 
 import com.batch.BatchProcessing.student.Student;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.stereotype.Component;
 
+@Component
 //in practice, the item processor will take input class, and output class, Not the same
 public class StudentProcessor implements ItemProcessor<Student,Student> {
 
